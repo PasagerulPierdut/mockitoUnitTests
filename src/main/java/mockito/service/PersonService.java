@@ -17,7 +17,8 @@ public class PersonService {
     }
 
     public List<Person> findAllEmployedPersons() {
-        return personRepository.getAll().stream()
+        List<Person> personList = personRepository.getAll();
+        return personList.stream()
                 .filter(person -> contractService.isEmployed(person.getId()))
                 .collect(Collectors.toList());
     }

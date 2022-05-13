@@ -18,7 +18,7 @@ public class PersonRepository {
     );
 
     public Person findByName(String name) {
-        return repository.stream()
+        return getAll().stream()
                 .filter(person -> person.getName().equals(name))
                 .findAny().orElseThrow(()-> new NoSuchElementException("This person does not exist in the repository"));
     }

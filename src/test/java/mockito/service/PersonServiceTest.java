@@ -29,6 +29,10 @@ class PersonServiceTest {
         personList.add(p1);
         personList.add(p2);
 
+        List<Contract> testContract = List.of(
+                new Contract(1, LocalDateTime.of(2027, 5, 5, 12, 15)
+        ));
+
         PersonRepository mockPersonRepository = Mockito.mock(PersonRepository.class);
         ContractRepository mockContractRepository = Mockito.mock(ContractRepository.class);
         ContractService mockContractService = new ContractService(mockContractRepository);
@@ -36,6 +40,7 @@ class PersonServiceTest {
 
         Mockito.when(mockPersonRepository.getAll()).thenReturn(personList);
         Mockito.when(mockContractRepository.existsById(Mockito.anyInt())).thenReturn(true).thenReturn(false);
+        Mockito.when(mockContractRepository.getAll()).thenReturn(testContract);
         Mockito.when(mockContractRepository.getContractById(1)).thenReturn(new Contract(1, LocalDateTime.of(2027, 5, 5, 12, 15)));
 
         List<Person> result = mockPersonService.findAllEmployedPersons();

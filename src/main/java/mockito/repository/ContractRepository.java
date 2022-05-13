@@ -18,13 +18,16 @@ public class ContractRepository {
             new Contract(6, LocalDateTime.of(2022, 5, 12, 10, 15))
     );
 
+    public List<Contract> getAll() {
+        return contractList;
+    }
     public boolean existsById(int id) {
-        return contractList.stream()
+        return getAll().stream()
                 .anyMatch(contract -> contract.getPersonId() == id);
     }
 
     public Contract getContractById(int id) {
-        Optional<Contract> opt = contractList.stream()
+        Optional<Contract> opt = getAll().stream()
                 .filter(contract -> contract.getPersonId() == id)
                 .findAny();
         if (opt.isPresent()) {

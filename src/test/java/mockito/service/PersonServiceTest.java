@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -29,10 +30,6 @@ class PersonServiceTest {
         personList.add(p1);
         personList.add(p2);
 
-        List<Contract> testContract = List.of(
-                new Contract(1, LocalDateTime.of(2027, 5, 5, 12, 15)
-        ));
-
         PersonRepository mockPersonRepository = Mockito.mock(PersonRepository.class);
         ContractRepository mockContractRepository = Mockito.mock(ContractRepository.class);
         ContractService mockContractService = new ContractService(mockContractRepository);
@@ -40,24 +37,43 @@ class PersonServiceTest {
 
         Mockito.when(mockPersonRepository.getAll()).thenReturn(personList);
         Mockito.when(mockContractRepository.existsById(Mockito.anyInt())).thenReturn(true).thenReturn(false);
-        Mockito.when(mockContractRepository.getAll()).thenReturn(testContract);
         Mockito.when(mockContractRepository.getContractById(1)).thenReturn(new Contract(1, LocalDateTime.of(2027, 5, 5, 12, 15)));
 
         List<Person> result = mockPersonService.findAllEmployedPersons();
+
         Assertions.assertEquals(p1, result.get(0));
         Mockito.verify(mockContractRepository, Mockito.times(1)).getContractById(Mockito.anyInt());
     }
-    @Test
-    void testIfFindByNameWithNoRegisteredArgumentThrows() {
 
-        PersonRepository mockPersonRepository = Mockito.mock(PersonRepository.class);
+    @Test
+    void testIfFindByNameWithNoRegisteredArgumentReturnsEmptyList() {
+
+        PersonRepository mockPersonRepository = new PersonRepository();
         ContractRepository mockContractRepository = Mockito.mock(ContractRepository.class);
         ContractService mockContractService = new ContractService(mockContractRepository);
         PersonService mockPersonService = new PersonService(mockPersonRepository, mockContractService);
 
-        NoSuchElementException thrown = Assertions.assertThrows(NoSuchElementException.class, () -> {
-                    mockPersonService.findByName("Martin");
-                });
-            Assertions.assertEquals("This person does not exist in the repository", thrown.getMessage());
+        List<Person> result = mockPersonService.findByName("Martin");
+
+        Assertions.assertEquals(0, result.size());
+    }
+
+    @Test
+    void verifyIfFindByNameReturnsMultipleInstances() {
+
+        List<Person> testList = List.of(
+                new Person(1, "Gigi", 24),
+                new Person(2, "Gigi", 28)
+        );
+
+        PersonRepository mockPersonRepository = Mockito.mock(PersonRepository.class);
+        PersonService mockPersonService = new PersonService(mockPersonRepository);
+        Mockito.when(mockPersonRepository.getAll()).thenReturn(testList);
+        Mockito.when(mockPersonService.findByName(Mockito.anyString())).thenCallRealMethod();
+        Mockito.when(mockPersonRepository.getAll()).thenReturn(testList);
+
+        List<Person> result = mockPersonService.findByName("Gigi");
+
+        Assertions.assertEquals(2, result.size());
     }
 }

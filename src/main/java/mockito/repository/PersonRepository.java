@@ -4,6 +4,8 @@ import mockito.model.Person;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
 public class PersonRepository {
 
     List<Person> repository = List.of(
@@ -17,10 +19,10 @@ public class PersonRepository {
             new Person(8, "Nicolae", 61)
     );
 
-    public Person findByName(String name) {
+    public List<Person> findByName(String name) {
         return getAll().stream()
                 .filter(person -> person.getName().equals(name))
-                .findAny().orElseThrow(()-> new NoSuchElementException("This person does not exist in the repository"));
+                .collect(Collectors.toList());
     }
 
     public List<Person> getAll() {

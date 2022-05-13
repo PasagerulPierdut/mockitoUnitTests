@@ -12,8 +12,12 @@ public class PersonService {
     private ContractService contractService;
 
     public PersonService(PersonRepository personRepository, ContractService contractService) {
-        this.personRepository =new  PersonRepository();
+        this.personRepository =personRepository;
         this.contractService = contractService;
+    }
+
+    public PersonService(PersonRepository personRepository) {
+        this.personRepository = personRepository;
     }
 
     public List<Person> findAllEmployedPersons() {
@@ -23,7 +27,7 @@ public class PersonService {
                 .collect(Collectors.toList());
     }
 
-    public Person findByName(String name) {
+    public List<Person> findByName(String name) {
         return personRepository.findByName(name);
     }
 }
